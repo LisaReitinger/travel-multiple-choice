@@ -8,4 +8,16 @@ from rich.console import Console
 from rich.table import Table
 from rich.progress import track
 
+SCOPE = [
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive.file",
+    "https://www.googleapis.com/auth/drive",
+]
+CREDS = ServiceAccountCredentials.from_json_keyfile_name("creds.json", SCOPE)
+CLIENT = gspread.authorize(CREDS)
+SHEET = CLIENT.open("QuizScores").worksheet("Scores")
 
+console = Console()
+
+if __name__ == "__main__":
+    main()
