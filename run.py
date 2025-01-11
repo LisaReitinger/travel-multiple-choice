@@ -19,6 +19,12 @@ SHEET = CLIENT.open("QuizScores").worksheet("Scores")
 
 console = Console()
 
+def clear_terminal():
+    """
+    Clears the terminal window prior to new content.
+    """
+    os.system('cls' if os.name == 'nt' else 'clear')
+
 class Quiz:
     """A class to manage the Travel & Geography Quiz."""
 
@@ -61,13 +67,13 @@ class Quiz:
             if self.validate_age(age):
                 self.age = int(age)
                 break
-
+        clear_terminal() # Clear the terminal after collecting user information
         console.print(f"[green]Welcome, {self.name}! Let's get started.[/green]")
 
 def main():
     """Main function to handle the program execution."""
-    quiz = Quiz()  # Create an instance of Quiz
-    quiz.welcome_user()  # Show the welcome message
+    quiz = Quiz() # Create an instance of Quiz
+    quiz.welcome_user() # Show the welcome message
     quiz.get_user_info() 
 
 if __name__ == "__main__":
