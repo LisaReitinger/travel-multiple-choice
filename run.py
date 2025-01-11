@@ -70,11 +70,67 @@ class Quiz:
         clear_terminal() # Clear the terminal after collecting user information
         console.print(f"[green]Welcome, {self.name}! Let's get started.[/green]")
 
+    def load_questions(self):
+        """Load questions for the quiz"""
+        self.questions = [
+            {
+                "question": "Where can you find the Christ the Redeemer statue?",
+                "options": ["Argentina", "Brazil", "Chile", "Mexico"],
+                "answer": "Brazil",
+            },
+            {
+                "question": "What is the capital of Canada?",
+                "options": ["Toronto", "Vancouver", "Ottawa", "Montreal"],
+                "answer": "Ottawa",
+            },
+            {
+                "question": "Which country has a red circle on a white background in its flag?",
+                "options": ["South Korea", "Japan", "Bangladesh", "Switzerland"],
+                "answer": "Japan",
+            },
+            {
+                "question": "Which country has the most islands in the world?",
+                "options": ["Indonesia", "Sweden", "Philippines", "Canada"],
+                "answer": "Sweden",
+            },
+            {
+                "question": "I am the highest mountain in the world. What am I?",
+                "options": ["K2", "Mount Kilimanjaro", "Mount Everest", "Mount McKinley"],
+                "answer": "Mount Everest",
+            },
+            {
+                "question": "What is the largest ocean on Earth?",
+                "options": ["Atlantic Ocean", "Indian Ocean", "Pacific Ocean", "Arctic Ocean"],
+                "answer": "Pacific Ocean",
+            },
+            {
+                "question": "What is the capital city of Australia?",
+                "options": ["Sydney", "Melbourne", "Canberra", "Perth"],
+                "answer": "Canberra",
+            },
+            {
+                "question": "In which country can you find Machu Picchu?",
+                "options": ["Peru", "Chile", "Mexico", "Brazil"],
+                "answer": "Peru",
+            },
+            {
+                "question": "What is the longest river in the world?",
+                "options": ["Nile", "Amazon", "Yangtze", "Mississippi"],
+                "answer": "Nile",
+            },
+            {
+                "question": "Which country is known as the 'Land of the Rising Sun'?",
+                "options": ["China", "Japan", "South Korea", "Thailand"],
+                "answer": "Japan",
+            },
+        ]
+
 def main():
     """Main function to handle the program execution."""
     quiz = Quiz() # Create an instance of Quiz
     quiz.welcome_user() # Show the welcome message
     quiz.get_user_info() 
+    quiz.load_questions() 
 
 if __name__ == "__main__":
     main()
