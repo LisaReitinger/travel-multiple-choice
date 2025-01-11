@@ -27,9 +27,16 @@ def welcome_user():
     print("Test your knowledge and see how well you score.")
     print("=====================================")
 
+def validate_name(name):
+    """Validate that the name is alphabetic and has a reasonable length."""
+    if not name.replace(" ", "").isalpha() or len(name) < 2 or len(name) > 50:
+        console.print("[red]Invalid name. Please enter a name with alphabetic characters only (2-50 characters).[/red]")
+        return False
+    return True
+
 def main():
     """Main function to handle the program execution."""
     pass
 
 if __name__ == "__main__":
-     welcome_user()
+   main()
