@@ -19,9 +19,17 @@ SHEET = CLIENT.open("QuizScores").worksheet("Scores")
 
 console = Console()
 
+def welcome_user():
+    """Display a welcome message to the user.
+    """
+    print("=====================================")
+    print("Welcome to the Travel & Geography Quiz!")
+    print("Test your knowledge and see how well you score.")
+    print("=====================================")
+
 def main():
     """Main function to handle the program execution."""
     pass
 
 if __name__ == "__main__":
-    main()
+     welcome_user()
