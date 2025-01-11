@@ -34,6 +34,17 @@ def validate_name(name):
         return False
     return True
 
+def validate_age(age):
+    """Validate that age is numeric and within a reasonable range."""
+    if not age.isdigit():
+        console.print("[red]Invalid age. Please enter numbers only.[/red]")
+        return False
+    age = int(age)
+    if age < 10 or age > 120:
+        console.print("[red]Invalid age. Please enter an age between 10 and 120.[/red]")
+        return False
+    return True
+
 def main():
     """Main function to handle the program execution."""
     pass
