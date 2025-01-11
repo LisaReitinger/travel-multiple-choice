@@ -125,12 +125,41 @@ class Quiz:
             },
         ]
 
+    def run_quiz(self):
+        """Run the quiz by presenting questions to the user."""
+        self.score = 0  # Reset score at the start of the quiz
+        for idx, question in enumerate(self.questions, start=1):
+            console.print(f"\n[bold yellow]Question {idx}: {question['question']}[/bold yellow]")
+            for i, option in enumerate(question["options"], start=1):
+                console.print(f"{i}. {option}", style="cyan")
+
+            while True:
+                try:
+                    choice = int(input("Enter the number of your choice: ").strip())
+                    if 1 <= choice <= len(question["options"]):
+                        break
+                    else:
+                        console.print("[red]Invalid choice. Please select a valid option.[/red]")
+                except ValueError:
+                    console.print("[red]Invalid input. Please enter a number.[/red]")
+
+            selected_option = question["options"][choice - 1]
+            if selected_option == question["answer"]:
+                self.score += 1
+                console.print("[green]Correct![/green]")
+            else:
+                console.print(f"[red]Wrong! The correct answer was: {question['answer']}[/red]")
+
+        console.print(f"\n[bold green]Quiz Complete![/bold green] You scored {self.score}/{len(self.questions)}.")
+
+
 def main():
     """Main function to handle the program execution."""
     quiz = Quiz() # Create an instance of Quiz
     quiz.welcome_user() # Show the welcome message
     quiz.get_user_info() 
     quiz.load_questions() 
+    quiz.run_quiz()
 
 if __name__ == "__main__":
     main()
