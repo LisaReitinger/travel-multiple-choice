@@ -19,5 +19,9 @@ SHEET = CLIENT.open("QuizScores").worksheet("Scores")
 
 console = Console()
 
+def main():
+    """Main function to handle the program execution."""
+    pass
+
 if __name__ == "__main__":
     main()
