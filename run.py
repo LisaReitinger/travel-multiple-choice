@@ -31,6 +31,7 @@ class Quiz:
     def welcome_user(self):
         """Display a welcome message to the user.
         """
+        clear_terminal()
         print("=====================================")
         print("Welcome to the Travel & Geography Quiz!")
         print("Test your knowledge and see how well you score.")
@@ -57,15 +58,17 @@ class Quiz:
     def get_user_info(self):
         """Collect and validate user information."""
         while True:
-            name = input("Enter your name (2-50 characters, alphabetic only): ").strip()
+            name = input("Enter your name: ").strip()
             if self.validate_name(name):
                 self.name = name
+                clear_terminal()
                 break
         
         while True:
             age = input("Enter your age (10-120): ").strip()
             if self.validate_age(age):
                 self.age = int(age)
+                clear_terminal()
                 break
         clear_terminal() # Clear the terminal after collecting user information
         console.print(f"[green]Welcome, {self.name}! Let's get started.[/green]")
@@ -131,6 +134,7 @@ class Quiz:
         summary = []
 
         for idx, question in enumerate(self.questions, start=1):
+            clear_terminal()
             console.print(f"\n[bold yellow]Question {idx}: {question['question']}[/bold yellow]")
             for i, option in enumerate(question["options"], start=1):
                 console.print(f"{i}. {option}", style="cyan")
@@ -166,6 +170,7 @@ class Quiz:
             else: 
                 console.print(f"[red]Wrong! The correct answer was: {question['answer']}[/red]")
 
+        clear_terminal()
         # Show the final score
         console.print(f"\n[bold green]Quiz Complete![/bold green] You scored {self.score}/{len(self.questions)}.")
 
