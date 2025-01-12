@@ -197,6 +197,10 @@ class Quiz:
                 clear_terminal()  # Clear the terminal
                 try:
                     data = SHEET.get_all_values()[1:]  # Skip the header row
+                    if not data:  # Check if data is empty
+                        console.print("[bold red]No scores available on the leaderboard yet![/bold red]")
+                        return
+                        
                     # Sort data by score (index 1), descending, and limit to top 10
                     sorted_data = sorted(data, key=lambda x: int(x[1]), reverse=True)[:10]
 
