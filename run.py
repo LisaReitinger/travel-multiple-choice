@@ -200,7 +200,7 @@ class Quiz:
                     if not data:  # Check if data is empty
                         console.print("[bold red]No scores available on the leaderboard yet![/bold red]")
                         return
-                        
+
                     # Sort data by score (index 1), descending, and limit to top 10
                     sorted_data = sorted(data, key=lambda x: int(x[1]), reverse=True)[:10]
 
@@ -228,13 +228,31 @@ class Quiz:
 
 def main():
     """Main function to handle the program execution."""
-    quiz = Quiz() # Create an instance of Quiz
-    quiz.welcome_user() # Show the welcome message
-    quiz.get_user_info() 
-    quiz.load_questions() 
-    quiz.run_quiz()
+    while True:
+        quiz = Quiz() 
+        quiz.welcome_user() 
+        quiz.get_user_info() 
+        quiz.load_questions() 
+        quiz.run_quiz()
 
-    quiz.display_leaderboard()
+        while True:
+            console.print("\n[bold cyan]What would you like to do next?[/bold cyan]")
+            console.print("1. Play Again\n2. View Leaderboard\n3. Exit")
+            choice = input("Enter your choice (1/2/3): ").strip()
+
+            if choice == "1":  # Play again
+                clear_terminal()
+                break  # Exit inner loop and restart the quiz
+            elif choice == "2":  # View leaderboard
+                clear_terminal()
+                quiz.display_leaderboard()
+                # Stay in the loop for further options after leaderboard
+            elif choice == "3":  # Exit
+                console.print("[bold green]Thank you for playing! Goodbye![/bold green]")
+                return  # Exit the program entirely
+            else:  # Invalid input
+                console.print("[red]Invalid input. Please enter 1, 2, or 3.[/red]")
+                # Re-prompt without exiting the loop
 
 if __name__ == "__main__":
     main()
