@@ -128,6 +128,8 @@ class Quiz:
     def run_quiz(self):
         """Run the quiz by presenting questions to the user."""
         self.score = 0  # Reset score at the start of the quiz
+        summary = []
+
         for idx, question in enumerate(self.questions, start=1):
             console.print(f"\n[bold yellow]Question {idx}: {question['question']}[/bold yellow]")
             for i, option in enumerate(question["options"], start=1):
@@ -146,12 +148,33 @@ class Quiz:
             selected_option = question["options"][choice - 1]
             if selected_option == question["answer"]:
                 self.score += 1
-                console.print("[green]Correct![/green]")
+                result = "Correct"
             else:
+                result = "Wrong"
+
+            # Add question details to the summary
+            summary.append({
+                "question": question["question"],
+                "your_answer": selected_option,
+                "correct_answer": question["answer"],
+                "result": result
+            })
+
+            # Provide immediate feedback to the user
+            if result == "Correct":
+                console.print("[green]Correct![/green]")
+            else: 
                 console.print(f"[red]Wrong! The correct answer was: {question['answer']}[/red]")
 
+        # Show the final score
         console.print(f"\n[bold green]Quiz Complete![/bold green] You scored {self.score}/{len(self.questions)}.")
 
+        # Display the summary
+        console.print("\n[bold cyan]Quiz Summary[/bold cyan]")
+        for idx, item in enumerate(summary, start=1):
+            console.print(f"\n[bold yellow]Question {idx}:[/bold yellow] {item['question']}")
+            console.print(f"Your Answer: [cyan]{item['your_answer']}[/cyan] | Correct Answer: [green]{item['correct_answer']}[/green]")
+            console.print(f"Result: [bold green]{item['result']}[/bold green]" if item["result"] == "Correct" else f"[bold red]{item['result']}[/bold red]")
 
 def main():
     """Main function to handle the program execution."""
