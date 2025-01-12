@@ -176,6 +176,17 @@ class Quiz:
             console.print(f"Your Answer: [cyan]{item['your_answer']}[/cyan] | Correct Answer: [green]{item['correct_answer']}[/green]")
             console.print(f"Result: [bold green]{item['result']}[/bold green]" if item["result"] == "Correct" else f"[bold red]{item['result']}[/bold red]")
 
+        self.save_results()
+
+    def save_results(self):
+        """Save the user's quiz results to Google Sheets."""
+        try: 
+            timestamp = datetime.now().strftime("%Y-%m-%d")
+            SHEET.append_row([self.name, self.score, timestamp])
+            console.print("[bold green]Your results have been saved to the leaderboard![/bold green]")
+        except Exception as e:
+            console.print(f"[red]Failed to save results: {e}[/red]")
+
 def main():
     """Main function to handle the program execution."""
     quiz = Quiz() # Create an instance of Quiz
