@@ -58,14 +58,14 @@ class Quiz:
     def get_user_info(self):
         """Collect and validate user information."""
         while True:
-            name = input("Enter your name: ").strip()
+            name = input("Enter your name:\n").strip()
             if self.validate_name(name):
                 self.name = name
                 clear_terminal()
                 break
         
         while True:
-            age = input("Enter your age (10-120): ").strip()
+            age = input("Enter your age (10-120):\n").strip()
             if self.validate_age(age):
                 self.age = int(age)
                 clear_terminal()
@@ -141,7 +141,7 @@ class Quiz:
 
             while True:
                 try:
-                    choice = int(input("Enter the number of your choice: ").strip())
+                    choice = int(input("Enter the number of your choice:\n").strip())
                     if 1 <= choice <= len(question["options"]):
                         break
                     else:
@@ -196,7 +196,7 @@ class Quiz:
         """Prompt the user and display the leaderboard from Google Sheets"""
         while True: 
             console.print("\n[bold cyan]Would you like to view the leaderboard? (y/n)[/bold cyan]")
-            choice = input("Enter your choice: ").strip().lower()
+            choice = input("Enter your choice:\n").strip().lower()
 
             if choice in ["y", "yes"]:
                 clear_terminal()  # Clear the terminal
@@ -243,7 +243,7 @@ def main():
         while True:
             console.print("\n[bold cyan]What would you like to do next?[/bold cyan]")
             console.print("1. Play Again\n2. View Leaderboard\n3. Exit")
-            choice = input("Enter your choice (1/2/3): ").strip()
+            choice = input("Enter your choice (1/2/3):\n").strip()
 
             if choice == "1":  # Play again
                 clear_terminal()
