@@ -10,3 +10,4 @@ pyasn1_modules==0.4.1
 pyparsing==3.2.1
 requests-oauthlib==2.0.0
 rsa==4.9
+rich==13.9.4
