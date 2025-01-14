@@ -174,13 +174,21 @@ class Quiz:
         # Show the final score
         console.print(f"\n[bold green]Quiz Complete![/bold green] You scored {self.score}/{len(self.questions)}.")
 
-        # Display the summary
-        console.print("\n[bold cyan]Quiz Summary[/bold cyan]")
-        for idx, item in enumerate(summary, start=1):
-            console.print(f"\n[bold yellow]Question {idx}:[/bold yellow] {item['question']}")
-            console.print(f"Your Answer: [cyan]{item['your_answer']}[/cyan] | Correct Answer: [green]{item['correct_answer']}[/green]")
-            console.print(f"Result: [bold green]{item['result']}[/bold green]" if item["result"] == "Correct" else f"[bold red]{item['result']}[/bold red]")
-
+        # Display the summary in chunks 
+        chunk_size = 4 
+        for i in range(0, len(summary), chunk_size):
+            clear_terminal()
+            chunk = summary[i:i + chunk_size]
+            console.print("\n[bold cyan]Quiz Summary[/bold cyan]")
+            for idx, item in enumerate(chunk, start=i + 1):
+                console.print(f"\n[bold yellow]Question {idx}:[/bold yellow] {item['question']}")
+                console.print(f"Your Answer: [cyan]{item['your_answer']}[/cyan] | Correct Answer: [green]{item['correct_answer']}[/green]")
+                console.print(f"Result: [bold green]{item['result']}[/bold green]" if item["result"] == "Correct" else f"[bold red]{item['result']}[/bold red]")
+            
+            # Show message if more chunks remain
+            if i + chunk_size < len(summary):
+                input("\nPress Enter to see the rest of your results...")
+    
         self.save_results()
 
     def save_results(self):
