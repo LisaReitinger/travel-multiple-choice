@@ -7,6 +7,7 @@ from datetime import datetime
 from rich.console import Console
 from rich.table import Table
 from rich.progress import track
+from pyfiglet import Figlet
 
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -25,6 +26,19 @@ def clear_terminal():
     """
     os.system('cls' if os.name == 'nt' else 'clear')
 
+def title_screen():
+    """
+    Display a title screen using pyfiglet.
+    """
+    f = Figlet(font="big")
+    clear_terminal()
+    print(f.renderText("TRAVEL QUIZ").center(80))
+    print("Welcome to the Travel & Geography Quiz!".center(80))
+    print("Test your knowledge and see how well you score.\n".center(80))
+    console.print("[bold cyan]Press Enter to start the quiz...[/bold cyan]")
+    input()
+    clear_terminal()
+
 class Quiz:
     """A class to manage the Travel & Geography Quiz."""
 
@@ -36,7 +50,7 @@ class Quiz:
         print("Welcome to the Travel & Geography Quiz!")
         print("Test your knowledge and see how well you score.")
         print("=====================================")
-
+    
     def validate_name(self, name):
         """Validate that the name is alphabetic and has a reasonable length."""
         if not name.replace(" ", "").isalpha() or len(name) < 2 or len(name) > 50:
@@ -241,6 +255,8 @@ class Quiz:
 
 def main():
     """Main function to handle the program execution."""
+    title_screen()  # Display the title and welcome message
+
     while True:
         quiz = Quiz() 
         quiz.welcome_user() 
