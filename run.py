@@ -30,9 +30,11 @@ def title_screen():
     """
     Display a title screen using pyfiglet.
     """
-    f = Figlet(font="big")
+    f = Figlet(font="big", width=80)
     clear_terminal()
-    print(f.renderText("TRAVEL QUIZ").center(80))
+    rendered_text = f.renderText("TRAVEL QUIZ").splitlines()  # Split text into lines
+    for line in rendered_text:
+        print(line.center(80))
     print("Welcome to the Travel & Geography Quiz!".center(80))
     print("Test your knowledge and see how well you score.\n".center(80))
     console.print("[bold cyan]Press Enter to start the quiz...[/bold cyan]")
