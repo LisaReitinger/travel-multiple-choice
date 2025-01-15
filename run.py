@@ -60,17 +60,6 @@ class Quiz:
             return False
         return True
 
-    def validate_age(self, age):
-        """Validate that age is numeric and within a reasonable range."""
-        if not age.isdigit():
-            console.print("[red]Invalid age. Please enter numbers only.[/red]")
-            return False
-        age = int(age)
-        if age < 10 or age > 120:
-            console.print("[red]Invalid age. Please enter an age between 10 and 120.[/red]")
-            return False
-        return True
-
     def get_user_info(self):
         """Collect and validate user information."""
         while True:
@@ -80,12 +69,6 @@ class Quiz:
                 clear_terminal()
                 break
         
-        while True:
-            age = input("Enter your age (10-120):\n").strip()
-            if self.validate_age(age):
-                self.age = int(age)
-                clear_terminal()
-                break
         clear_terminal() # Clear the terminal after collecting user information
         console.print(f"[green]Welcome, {self.name}! Let's get started.[/green]")
 
