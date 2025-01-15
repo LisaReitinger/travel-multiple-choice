@@ -200,43 +200,28 @@ class Quiz:
             console.print(f"[red]Failed to save results: {e}[/red]")
 
     def display_leaderboard(self):
-        """Prompt the user and display the leaderboard from Google Sheets"""
-        while True: 
-            console.print("\n[bold cyan]Would you like to view the leaderboard? (y/n)[/bold cyan]")
-            choice = input("Enter your choice:\n").strip().lower()
+        """Display the leaderboard from Google Sheets."""
+        clear_terminal()  # Clear the terminal
+        try:
+            data = SHEET.get_all_values()[1:]  # Skip the header row
+            if not data:  # Check if data is empty
+                console.print("[bold red]No scores available on the leaderboard yet![/bold red]")
+                return
 
-            if choice in ["y", "yes"]:
-                clear_terminal()  # Clear the terminal
-                try:
-                    data = SHEET.get_all_values()[1:]  # Skip the header row
-                    if not data:  # Check if data is empty
-                        console.print("[bold red]No scores available on the leaderboard yet![/bold red]")
-                        return
+            # Sort data by score (index 1), descending, and limit to top 10
+            sorted_data = sorted(data, key=lambda x: int(x[1]), reverse=True)[:10]
 
-                    # Sort data by score (index 1), descending, and limit to top 10
-                    sorted_data = sorted(data, key=lambda x: int(x[1]), reverse=True)[:10]
+            table = Table(title="Leaderboard", style="cyan")
+            table.add_column("Name", justify="left", style="magenta", no_wrap=True)
+            table.add_column("Score", justify="center", style="green")
+            table.add_column("Date", justify="left", style="yellow")
 
-                    table = Table(title="Leaderboard", style="cyan")
-                    table.add_column("Name", justify="left", style="magenta", no_wrap=True)
-                    table.add_column("Score", justify="center", style="green")
-                    table.add_column("Date", justify="left", style="yellow")
-                
-                    for row in sorted_data:
-                        table.add_row(row[0], row[1], row[2])
+            for row in sorted_data:
+                table.add_row(row[0], row[1], row[2])
 
-                    console.print(table)
-                except Exception as e:
-                    console.print(f"[red]Failed to fetch leaderboard: {e}[/red]")
-                break
-
-            elif choice in ["n", "no"]:  # Redirect to beginning
-                    clear_terminal()
-                    console.print("[bold green]Redirecting to the beginning...[/bold green]")
-                    main()  # Restart the program
-                    break  # This line won't actually execute since `main()` restarts
-
-            else:  # Invalid input
-                    console.print("[red]Invalid input. Please enter 'y' or 'n'.[/red]")
+            console.print(table)
+        except Exception as e:
+            console.print(f"[red]Failed to fetch leaderboard: {e}[/red]")
 
 def main():
     """Main function to handle the program execution."""
