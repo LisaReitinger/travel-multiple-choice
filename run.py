@@ -37,21 +37,16 @@ def title_screen():
         print(line.center(80))
     print("Welcome to the Travel & Geography Quiz!".center(80))
     print("Test your knowledge and see how well you score.\n".center(80))
+    print("\nInstructions:")
+    print("1. Answer each question by typing the number of your choice.")
+    print("2. Your final score will be displayed at the end.")
+    print("3. View the leaderboard to compare scores with others.\n")
     console.print("[bold cyan]Press Enter to start the quiz...[/bold cyan]")
     input()
     clear_terminal()
 
 class Quiz:
     """A class to manage the Travel & Geography Quiz."""
-
-    def welcome_user(self):
-        """Display a welcome message to the user.
-        """
-        clear_terminal()
-        print("=====================================")
-        print("Welcome to the Travel & Geography Quiz!")
-        print("Test your knowledge and see how well you score.")
-        print("=====================================")
     
     def validate_name(self, name):
         """Validate that the name is alphabetic and has a reasonable length."""
@@ -229,7 +224,6 @@ def main():
 
     while True:
         quiz = Quiz() 
-        quiz.welcome_user() 
         quiz.get_user_info() 
         quiz.load_questions() 
         quiz.run_quiz()
