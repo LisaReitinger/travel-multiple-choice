@@ -122,6 +122,9 @@ class Quiz:
             },
         ]
 
+        # Shuffle the questions
+        random.shuffle(self.questions)
+
     def run_quiz(self):
         """Run the quiz by presenting questions to the user."""
         self.score = 0  # Reset score at the start of the quiz
