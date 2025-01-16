@@ -9,6 +9,7 @@ from rich.table import Table
 from rich.progress import track
 from pyfiglet import Figlet
 import re
+import threading
 
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -17,7 +18,10 @@ SCOPE = [
 ]
 CREDS = ServiceAccountCredentials.from_json_keyfile_name("creds.json", SCOPE)
 CLIENT = gspread.authorize(CREDS)
-SHEET = CLIENT.open("QuizScores").worksheet("Scores")
+# Open Google Sheet and define both worksheets
+SHEET = CLIENT.open("QuizScores")
+EASY_SCORES = SHEET.worksheet("Easy Scores")
+HARD_SCORES = SHEET.worksheet("Hard Scores")
 
 console = Console()
 
@@ -78,9 +82,26 @@ class Quiz:
                 self.name = name
                 clear_terminal()
                 break
+
+        # Ask user for difficulty mode
+        while True:
+            console.print("\n[bold cyan]Choose Difficulty Level:[/bold cyan]")
+            console.print("1. Easy Mode (No Timer)\n2. Hard Mode (5-second Timer)")
+            choice = input("Enter 1 for Easy or 2 for Hard:\n").strip()
+
+            if choice == "1":
+                self.difficulty = "Easy"
+                self.sheet = EASY_SCORES
+                break
+            elif choice == "2":
+                self.difficulty = "Hard"
+                self.sheet = HARD_SCORES
+                break
+            else:
+                console.print("[red]Invalid choice. Please enter 1 or 2.[/red]")
         
-        clear_terminal() # Clear the terminal after collecting user information
-        console.print(f"[green]Welcome, {self.name}! Let's get started.[/green]")
+        clear_terminal() 
+        console.print(f"[green]Welcome, {self.name}! Playing in {self.difficulty} Mode.[/green]\n")
 
     def load_questions(self):
         """Load questions for the quiz"""
@@ -151,35 +172,62 @@ class Quiz:
             for i, option in enumerate(question["options"], start=1):
                 console.print(f"{i}. {option}", style="cyan")
 
+            # Timer function (only for Hard mode)
+            def timeout():
+                console.print("\n[red]Time's up! Moving to the next question...[/red]")
+                self.timeout_flag = True
+
+            self.timeout_flag = False
+            selected_option = None
+
+            if self.difficulty == "Hard":
+                timer = threading.Timer(5.0, timeout) 
+                timer.start()
+
             while True:
                 try:
-                    choice = int(input("Enter the number of your choice:\n").strip())
-                    if 1 <= choice <= len(question["options"]):
+                    choice = input("Enter the number of your choice:\n").strip()
+                    
+                    if self.timeout_flag:  # If timer ran out, break out of input loop
                         break
+                    
+                    if choice.isdigit():
+                        choice = int(choice)
+                        if 1 <= choice <= len(question["options"]):
+                            selected_option = question["options"][choice - 1]
+                            break
+                        else:
+                            console.print("[red]Invalid choice. Please select a valid option.[/red]")
                     else:
-                        console.print("[red]Invalid choice. Please select a valid option.[/red]")
+                        console.print("[red]Invalid input. Please enter a number.[/red]")
                 except ValueError:
                     console.print("[red]Invalid input. Please enter a number.[/red]")
 
-            selected_option = question["options"][choice - 1]
-            if selected_option == question["answer"]:
+            if self.difficulty == "Hard":
+                timer.cancel()  # Stop the timer if the user answered in time
+
+            # Determine if answer is correct or if user ran out of time
+            if not selected_option:
+                result = "Timeout"
+            elif selected_option == question["answer"]:
                 self.score += 1
                 result = "Correct"
             else:
                 result = "Wrong"
 
-            # Add question details to the summary
             summary.append({
                 "question": question["question"],
-                "your_answer": selected_option,
+                "your_answer": selected_option if selected_option else "No Answer",
                 "correct_answer": question["answer"],
                 "result": result
             })
 
-            # Provide immediate feedback to the user
+            # Provide immediate feedback
             if result == "Correct":
                 console.print("[green]Correct![/green]")
-            else: 
+            elif result == "Timeout":
+                console.print(f"[red]You ran out of time! The correct answer was: {question['answer']}[/red]")
+            else:
                 console.print(f"[red]Wrong! The correct answer was: {question['answer']}[/red]")
 
         clear_terminal()
@@ -205,26 +253,34 @@ class Quiz:
 
     def save_results(self):
         """Save the user's quiz results to Google Sheets."""
-        try: 
+        try:
             timestamp = datetime.now().strftime("%Y-%m-%d")
-            SHEET.append_row([self.name, self.score, timestamp])
+            self.sheet.append_row([self.name, self.score, timestamp])  # Save to correct sheet
+
             console.print("[bold green]Your results have been saved to the leaderboard![/bold green]")
         except Exception as e:
             console.print(f"[red]Failed to save results: {e}[/red]")
 
     def display_leaderboard(self):
-        """Display the leaderboard from Google Sheets."""
-        clear_terminal()  # Clear the terminal
+        """Allow user to select which leaderboard to view (Easy or Hard)."""
+        clear_terminal()
+
+        # Select the correct sheet based on difficulty mode
+        sheet_name = "Easy Scores" if self.difficulty == "Easy" else "Hard Scores" 
+
         try:
-            data = SHEET.get_all_values()[1:]  # Skip the header row
-            if not data:  # Check if data is empty
-                console.print("[bold red]No scores available on the leaderboard yet![/bold red]")
+            leaderboard_sheet = SHEET.worksheet(sheet_name)  # FIX: Correct variable name
+
+            console.print(f"\n[bold cyan]Showing {sheet_name} Leaderboard[/bold cyan]")
+
+            data = leaderboard_sheet.get_all_values()[1:]  # Skip the header row
+            if not data:  # Check if leaderboard is empty
+                console.print("[bold red]No scores available yet![/bold red]")
                 return
 
-            # Sort data by score (index 1), descending, and limit to top 10
             sorted_data = sorted(data, key=lambda x: int(x[1]), reverse=True)[:10]
 
-            table = Table(title="Leaderboard", style="cyan")
+            table = Table(title=f"{self.difficulty} Mode Leaderboard", style="cyan")
             table.add_column("Name", justify="left", style="magenta", no_wrap=True)
             table.add_column("Score", justify="center", style="green")
             table.add_column("Date", justify="left", style="yellow")
