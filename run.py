@@ -8,6 +8,7 @@ from rich.console import Console
 from rich.table import Table
 from rich.progress import track
 from pyfiglet import Figlet
+import re
 
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -50,9 +51,23 @@ class Quiz:
     
     def validate_name(self, name):
         """Validate that the name is alphabetic and has a reasonable length."""
-        if not name.replace(" ", "").isalpha() or len(name) < 2 or len(name) > 50:
-            console.print("[red]Invalid name. Please enter a name with alphabetic characters only (2-50 characters).[/red]")
+        name = name.strip()
+
+        # Check if name contains only alphabetic characters and spaces
+        if not re.match(r"^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$", name):
+            console.print("[red]Invalid name. Use only alphabetic characters (A-Z, a-z) and spaces.[/red]")
             return False
+
+        # Ensure name is between 2 and 20 characters
+        if len(name) < 2 or len(name) > 20:
+            console.print("[red]Invalid name length. Must be between 2 and 20 characters.[/red]")
+            return False
+
+        # Prevent multiple consecutive spaces
+        if "  " in name:
+            console.print("[red]Invalid name. No consecutive spaces allowed.[/red]")
+            return False
+
         return True
 
     def get_user_info(self):
