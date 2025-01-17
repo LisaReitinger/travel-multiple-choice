@@ -170,7 +170,7 @@ class Quiz:
             clear_terminal()
             console.print(f"\n[bold yellow]Question {idx}: {question['question']}[/bold yellow]")
             for i, option in enumerate(question["options"], start=1):
-                console.print(f"{i}. {option}", style="cyan")
+                console.print(f"[bright_cyan]{i}. {option}[/bright_cyan]")
 
             # Timer function (only for Hard mode)
             def timeout():
@@ -269,7 +269,7 @@ class Quiz:
         sheet_name = "Easy Scores" if self.difficulty == "Easy" else "Hard Scores" 
 
         try:
-            leaderboard_sheet = SHEET.worksheet(sheet_name)  # FIX: Correct variable name
+            leaderboard_sheet = SHEET.worksheet(sheet_name)
 
             console.print(f"\n[bold cyan]Showing {sheet_name} Leaderboard[/bold cyan]")
 
@@ -281,7 +281,7 @@ class Quiz:
             sorted_data = sorted(data, key=lambda x: int(x[1]), reverse=True)[:10]
 
             table = Table(title=f"{self.difficulty} Mode Leaderboard", style="cyan")
-            table.add_column("Name", justify="left", style="magenta", no_wrap=True)
+            table.add_column("Name", justify="left", style="bright_magenta", no_wrap=True)
             table.add_column("Score", justify="center", style="green")
             table.add_column("Date", justify="left", style="yellow")
 
