@@ -210,7 +210,7 @@ class Quiz:
         def countdown_timer(timer_event):
             """Displays a countdown timer in a separate
             place and stops if answered."""
-            for remaining in range(5, 0, -1):
+            for remaining in range(5, -1, -1):
                 if timer_event.is_set():
                     return  # Exit early if the user answers
 
