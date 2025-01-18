@@ -12,3 +12,4 @@ pyparsing==3.2.1
 requests-oauthlib==2.0.0
 rsa==4.9
 rich==13.5.2
+black==23.3.0

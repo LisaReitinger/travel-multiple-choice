@@ -25,11 +25,13 @@ HARD_SCORES = SHEET.worksheet("Hard Scores")
 
 console = Console()
 
+
 def clear_terminal():
     """
     Clears the terminal window prior to new content.
     """
-    os.system('cls' if os.name == 'nt' else 'clear')
+    os.system("cls" if os.name == "nt" else "clear")
+
 
 def title_screen():
     """
@@ -37,7 +39,7 @@ def title_screen():
     """
     f = Figlet(font="big", width=80)
     clear_terminal()
-    rendered_text = f.renderText("TRAVEL QUIZ").splitlines()  # Split text into lines
+    rendered_text = f.renderText("TRAVEL QUIZ").splitlines()
     for line in rendered_text:
         print(line.center(80))
     print("Welcome to the Travel & Geography Quiz!".center(80))
@@ -50,29 +52,39 @@ def title_screen():
     input()
     clear_terminal()
 
+
 class Quiz:
     """A class to manage the Travel & Geography Quiz."""
+
     def __init__(self):
         """Initialize the Quiz instance."""
-        self.console = Console()  
-    
+        self.console = Console()
+
     def validate_name(self, name):
         """Validate that the name is alphabetic and has a reasonable length."""
         name = name.strip()
 
         # Check if name contains only alphabetic characters and spaces
         if not re.match(r"^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$", name):
-            console.print("[red]Invalid name. Use only alphabetic characters (A-Z, a-z) and spaces.[/red]")
+            console.print(
+                "[red]Invalid name. Use only alphabetic "
+                "characters (A-Z, a-z) and spaces.[/red]"
+            )
             return False
 
         # Ensure name is between 2 and 20 characters
         if len(name) < 2 or len(name) > 20:
-            console.print("[red]Invalid name length. Must be between 2 and 20 characters.[/red]")
+            console.print(
+                "[red]Invalid name length. "
+                "Must be between 2 and 20 characters.[/red]"
+            )
             return False
 
         # Prevent multiple consecutive spaces
         if "  " in name:
-            console.print("[red]Invalid name. No consecutive spaces allowed.[/red]")
+            console.print(
+                "[red]Invalid name. No consecutive spaces allowed.[/red]"
+            )
             return False
 
         return True
@@ -89,7 +101,9 @@ class Quiz:
         # Ask user for difficulty mode
         while True:
             console.print("\n[bold cyan]Choose Difficulty Level:[/bold cyan]")
-            console.print("1. Easy Mode (No Timer)\n2. Hard Mode (5-second Timer)")
+            console.print(
+                "1. Easy Mode (No Timer)\n2. Hard Mode (5-second Timer)"
+            )
             choice = input("Enter 1 for Easy or 2 for Hard:\n").strip()
 
             if choice == "1":
@@ -101,16 +115,22 @@ class Quiz:
                 self.sheet = HARD_SCORES
                 break
             else:
-                console.print("[red]Invalid choice. Please enter 1 or 2.[/red]")
-        
-        clear_terminal() 
-        console.print(f"[green]Welcome, {self.name}! Playing in {self.difficulty} Mode.[/green]\n")
+                console.print(
+                    "[red]Invalid choice. Please enter 1 or 2.[/red]"
+                )
+
+        clear_terminal()
+        console.print(
+            f"[green]Welcome, {self.name}! "
+            f"Playing in {self.difficulty} Mode.[/green]\n"
+        )
 
     def load_questions(self):
         """Load questions for the quiz"""
         self.questions = [
             {
-                "question": "Where can you find the Christ the Redeemer statue?",
+                "question": "Where can you find the Christ "
+                            "the Redeemer statue?",
                 "options": ["Argentina", "Brazil", "Chile", "Mexico"],
                 "answer": "Brazil",
             },
@@ -120,8 +140,14 @@ class Quiz:
                 "answer": "Ottawa",
             },
             {
-                "question": "Which country has a red circle on a white background in its flag?",
-                "options": ["South Korea", "Japan", "Bangladesh", "Switzerland"],
+                "question": "Which country has a red circle "
+                            "on a white background in its flag?",
+                "options": [
+                    "South Korea",
+                    "Japan",
+                    "Bangladesh",
+                    "Switzerland",
+                ],
                 "answer": "Japan",
             },
             {
@@ -130,13 +156,24 @@ class Quiz:
                 "answer": "Sweden",
             },
             {
-                "question": "I am the highest mountain in the world. What am I?",
-                "options": ["K2", "Mount Kilimanjaro", "Mount Everest", "Mount McKinley"],
+                "question": "I am the highest mountain in the world. "
+                            "What am I?",
+                "options": [
+                    "K2",
+                    "Mount Kilimanjaro",
+                    "Mount Everest",
+                    "Mount McKinley",
+                ],
                 "answer": "Mount Everest",
             },
             {
                 "question": "What is the largest ocean on Earth?",
-                "options": ["Atlantic Ocean", "Indian Ocean", "Pacific Ocean", "Arctic Ocean"],
+                "options": [
+                    "Atlantic Ocean",
+                    "Indian Ocean",
+                    "Pacific Ocean",
+                    "Arctic Ocean",
+                ],
                 "answer": "Pacific Ocean",
             },
             {
@@ -155,7 +192,8 @@ class Quiz:
                 "answer": "Nile",
             },
             {
-                "question": "Which country is known as the 'Land of the Rising Sun'?",
+                "question": "Which country is known as "
+                            "the 'Land of the Rising Sun'?",
                 "options": ["China", "Japan", "South Korea", "Thailand"],
                 "answer": "Japan",
             },
@@ -166,33 +204,48 @@ class Quiz:
 
     def run_quiz(self):
         """Run the quiz by presenting questions to the user."""
-        self.score = 0 
+        self.score = 0
         summary = []
 
         def countdown_timer(timer_event):
-            """Displays a countdown timer in a separate place and stops if answered."""
+            """Displays a countdown timer in a separate
+            place and stops if answered."""
             for remaining in range(5, 0, -1):
                 if timer_event.is_set():
                     return  # Exit early if the user answers
-                    
+
                 clear_terminal()
-                console.print(f"\n[bold yellow]Question {idx}: {question['question']}[/bold yellow]")
+                console.print(
+                    f"\n[bold yellow]Question {idx}: "
+                    f"{question['question']}[/bold yellow]"
+                )
                 for i, option in enumerate(question["options"], start=1):
                     console.print(f"[bright_cyan]{i}. {option}[/bright_cyan]")
 
-                console.print(f"\n[bold red]Time Left: {remaining}s[/bold red]", justify="center")  
+                console.print(
+                    f"\n[bold red]Time Left: {remaining}s[/bold red]",
+                    justify="center",
+                )
                 time.sleep(1)
 
                 if remaining == 2 and not timer_event.is_set():
-                    console.print("\n[bold red]Hurry up! Only 2 seconds left![/bold red]")
+                    console.print(
+                        "\n[bold red]Hurry up! Only 2 seconds left![/bold red]"
+                    )
 
             if not timer_event.is_set():
                 self.timeout_flag = True  # Mark as timed out
-                console.print("\n[bold red]Timeout! Press enter to move to the next question...[/bold red]")  
+                console.print(
+                    "\n[bold red]Timeout! Press enter to "
+                    "move to the next question...[/bold red]"
+                )
 
         for idx, question in enumerate(self.questions, start=1):
             clear_terminal()
-            console.print(f"\n[bold yellow]Question {idx}: {question['question']}[/bold yellow]")
+            console.print(
+                f"\n[bold yellow]Question {idx}: "
+                f"{question['question']}[/bold yellow]"
+            )
             for i, option in enumerate(question["options"], start=1):
                 console.print(f"[bright_cyan]{i}. {option}[/bright_cyan]")
 
@@ -201,20 +254,22 @@ class Quiz:
             timer_event = threading.Event()
 
             if self.difficulty == "Hard":
-                timer_thread = threading.Thread(target=countdown_timer, args=(timer_event,))
+                timer_thread = threading.Thread(
+                    target=countdown_timer, args=(timer_event,)
+                )
                 timer_thread.start()
 
             console.print("\n[bold cyan]Enter your choice below:[/bold cyan]")
 
-            while not self.timeout_flag:  
+            while not self.timeout_flag:
                 if timer_event.is_set():
-                    break  
+                    break
 
                 try:
                     choice = input().strip()
 
-                    if self.timeout_flag:  
-                        break 
+                    if self.timeout_flag:
+                        break
 
                     if choice.isdigit():
                         choice = int(choice)
@@ -223,11 +278,16 @@ class Quiz:
                             timer_event.set()  # Stop the timer immediately
                             break
                         else:
-                            console.print("[red]Invalid choice. Please select a valid option.[/red]")
+                            console.print(
+                                "[red]Invalid choice. "
+                                "Please select a valid option.[/red]"
+                            )
                     else:
-                        console.print("[red]Invalid input. Please enter a number.[/red]")
+                        console.print(
+                            "[red]Invalid input. Please enter a number.[/red]"
+                        )
                 except Exception:
-                    break  
+                    break
 
             if self.difficulty == "Hard":
                 timer_thread.join()  # Ensure the timer stops before continuing
@@ -241,30 +301,45 @@ class Quiz:
             else:
                 result = "Wrong"
 
-            summary.append({
-                "question": question["question"],
-                "your_answer": selected_option,
-                "correct_answer": question["answer"],
-                "result": result
-            })
+            summary.append(
+                {
+                    "question": question["question"],
+                    "your_answer": selected_option,
+                    "correct_answer": question["answer"],
+                    "result": result,
+                }
+            )
 
         clear_terminal()
-        console.print(f"\n[bold green]Quiz Complete![/bold green] You scored {self.score}/{len(self.questions)}.")
+        console.print(
+            f"\n[bold green]Quiz Complete![/bold green] "
+            f"You scored {self.score}/{len(self.questions)}."
+        )
 
         # Final summary display
         chunk_size = 4
         for i in range(0, len(summary), chunk_size):
             clear_terminal()
-            chunk = summary[i:i + chunk_size]
+            chunk = summary[i: i + chunk_size]
             console.print("\n[bold cyan]Quiz Summary[/bold cyan]")
             for idx, item in enumerate(chunk, start=i + 1):
-                console.print(f"\n[bold yellow]Question {idx}:[/bold yellow] {item['question']}")
-                console.print(f"Your Answer: [cyan]{item['your_answer']}[/cyan] | Correct Answer: [green]{item['correct_answer']}[/green]")
-                console.print(f"Result: [bold green]{item['result']}[/bold green]" if item["result"] == "Correct" else f"[bold red]{item['result']}[/bold red]")
-            
+                console.print(
+                    f"\n[bold yellow]Question {idx}:[/bold yellow] "
+                    f"{item['question']}"
+                )
+                console.print(
+                    f"Your Answer: [cyan]{item['your_answer']}[/cyan] | "
+                    f"Correct Answer: [green]{item['correct_answer']}[/green]"
+                )
+                console.print(
+                    f"Result: [bold green]{item['result']}[/bold green]"
+                    if item["result"] == "Correct"
+                    else f"[bold red]{item['result']}[/bold red]"
+                )
+
             # Show message if more chunks remain
             if i + chunk_size < len(summary):
-                input("\nPress Enter to see the rest of your results...")
+                input("\nPress Enter to see the rest of your results...\n")
 
         self.save_results()
 
@@ -272,9 +347,14 @@ class Quiz:
         """Save the user's quiz results to Google Sheets."""
         try:
             timestamp = datetime.now().strftime("%Y-%m-%d")
-            self.sheet.append_row([self.name, self.score, timestamp])  # Save to correct sheet
+            self.sheet.append_row(
+                [self.name, self.score, timestamp]
+            )  # Save to correct sheet
 
-            console.print("[bold green]Your results have been saved to the leaderboard![/bold green]")
+            console.print(
+                "[bold green]Your results have been saved to "
+                "the leaderboard![/bold green]"
+            )
         except Exception as e:
             console.print(f"[red]Failed to save results: {e}[/red]")
 
@@ -283,22 +363,34 @@ class Quiz:
         clear_terminal()
 
         # Select the correct sheet based on difficulty mode
-        sheet_name = "Easy Scores" if self.difficulty == "Easy" else "Hard Scores" 
+        sheet_name = (
+            "Easy Scores" if self.difficulty == "Easy" else "Hard Scores"
+        )
 
         try:
             leaderboard_sheet = SHEET.worksheet(sheet_name)
 
-            console.print(f"\n[bold cyan]Showing {sheet_name} Leaderboard[/bold cyan]")
+            console.print(
+                f"\n[bold cyan]Showing {sheet_name} Leaderboard[/bold cyan]"
+            )
 
-            data = leaderboard_sheet.get_all_values()[1:]  # Skip the header row
+            data = leaderboard_sheet.get_all_values()[
+                1:
+            ]  # Skip the header row
             if not data:  # Check if leaderboard is empty
                 console.print("[bold red]No scores available yet![/bold red]")
                 return
 
-            sorted_data = sorted(data, key=lambda x: int(x[1]), reverse=True)[:10]
+            sorted_data = sorted(data, key=lambda x: int(x[1]), reverse=True)[
+                :10
+            ]
 
-            table = Table(title=f"{self.difficulty} Mode Leaderboard", style="cyan")
-            table.add_column("Name", justify="left", style="bright_magenta", no_wrap=True)
+            table = Table(
+                title=f"{self.difficulty} Mode Leaderboard", style="cyan"
+            )
+            table.add_column(
+                "Name", justify="left", style="bright_magenta", no_wrap=True
+            )
             table.add_column("Score", justify="center", style="green")
             table.add_column("Date", justify="left", style="yellow")
 
@@ -309,18 +401,21 @@ class Quiz:
         except Exception as e:
             console.print(f"[red]Failed to fetch leaderboard: {e}[/red]")
 
+
 def main():
     """Main function to handle the program execution."""
     title_screen()  # Display the title and welcome message
 
     while True:
-        quiz = Quiz() 
-        quiz.get_user_info() 
-        quiz.load_questions() 
+        quiz = Quiz()
+        quiz.get_user_info()
+        quiz.load_questions()
         quiz.run_quiz()
 
         while True:
-            console.print("\n[bold cyan]What would you like to do next?[/bold cyan]")
+            console.print(
+                "\n[bold cyan]What would you like to do next?[/bold cyan]"
+            )
             console.print("1. Play Again\n2. View Leaderboard\n3. Exit")
             choice = input("Enter your choice (1/2/3):\n").strip()
 
@@ -332,11 +427,16 @@ def main():
                 quiz.display_leaderboard()
                 # Stay in the loop for further options after leaderboard
             elif choice == "3":  # Exit
-                console.print("[bold green]Thank you for playing! Goodbye![/bold green]")
+                console.print(
+                    "[bold green]Thank you for playing! Goodbye![/bold green]"
+                )
                 return  # Exit the program entirely
             else:  # Invalid input
-                console.print("[red]Invalid input. Please enter 1, 2, or 3.[/red]")
+                console.print(
+                    "[red]Invalid input. Please enter 1, 2, or 3.[/red]"
+                )
                 # Re-prompt without exiting the loop
+
 
 if __name__ == "__main__":
     main()
