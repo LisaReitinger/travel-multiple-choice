@@ -52,6 +52,9 @@ def title_screen():
 
 class Quiz:
     """A class to manage the Travel & Geography Quiz."""
+    def __init__(self):
+        """Initialize the Quiz instance."""
+        self.console = Console()  
     
     def validate_name(self, name):
         """Validate that the name is alphabetic and has a reasonable length."""
@@ -163,8 +166,29 @@ class Quiz:
 
     def run_quiz(self):
         """Run the quiz by presenting questions to the user."""
-        self.score = 0  # Reset score at the start of the quiz
+        self.score = 0 
         summary = []
+
+        def countdown_timer(timer_event):
+            """Displays a countdown timer in a separate place and stops if answered."""
+            for remaining in range(5, 0, -1):
+                if timer_event.is_set():
+                    return  # Exit early if the user answers
+                    
+                clear_terminal()
+                console.print(f"\n[bold yellow]Question {idx}: {question['question']}[/bold yellow]")
+                for i, option in enumerate(question["options"], start=1):
+                    console.print(f"[bright_cyan]{i}. {option}[/bright_cyan]")
+
+                console.print(f"\n[bold red]Time Left: {remaining}s[/bold red]", justify="center")  
+                time.sleep(1)
+
+                if remaining == 2 and not timer_event.is_set():
+                    console.print("\n[bold red]Hurry up! Only 2 seconds left![/bold red]")
+
+            if not timer_event.is_set():
+                self.timeout_flag = True  # Mark as timed out
+                console.print("\n[bold red]Timeout! Press enter to move to the next question...[/bold red]")  
 
         for idx, question in enumerate(self.questions, start=1):
             clear_terminal()
@@ -172,43 +196,45 @@ class Quiz:
             for i, option in enumerate(question["options"], start=1):
                 console.print(f"[bright_cyan]{i}. {option}[/bright_cyan]")
 
-            # Timer function (only for Hard mode)
-            def timeout():
-                console.print("\n[red]Time's up! Moving to the next question...[/red]")
-                self.timeout_flag = True
-
-            self.timeout_flag = False
             selected_option = None
+            self.timeout_flag = False
+            timer_event = threading.Event()
 
             if self.difficulty == "Hard":
-                timer = threading.Timer(5.0, timeout) 
-                timer.start()
+                timer_thread = threading.Thread(target=countdown_timer, args=(timer_event,))
+                timer_thread.start()
 
-            while True:
+            console.print("\n[bold cyan]Enter your choice below:[/bold cyan]")
+
+            while not self.timeout_flag:  
+                if timer_event.is_set():
+                    break  
+
                 try:
-                    choice = input("Enter the number of your choice:\n").strip()
-                    
-                    if self.timeout_flag:  # If timer ran out, break out of input loop
-                        break
-                    
+                    choice = input().strip()
+
+                    if self.timeout_flag:  
+                        break 
+
                     if choice.isdigit():
                         choice = int(choice)
                         if 1 <= choice <= len(question["options"]):
                             selected_option = question["options"][choice - 1]
+                            timer_event.set()  # Stop the timer immediately
                             break
                         else:
                             console.print("[red]Invalid choice. Please select a valid option.[/red]")
                     else:
                         console.print("[red]Invalid input. Please enter a number.[/red]")
-                except ValueError:
-                    console.print("[red]Invalid input. Please enter a number.[/red]")
+                except Exception:
+                    break  
 
             if self.difficulty == "Hard":
-                timer.cancel()  # Stop the timer if the user answered in time
+                timer_thread.join()  # Ensure the timer stops before continuing
 
-            # Determine if answer is correct or if user ran out of time
-            if not selected_option:
+            if self.timeout_flag:
                 result = "Timeout"
+                selected_option = "No Answer"
             elif selected_option == question["answer"]:
                 self.score += 1
                 result = "Correct"
@@ -217,25 +243,16 @@ class Quiz:
 
             summary.append({
                 "question": question["question"],
-                "your_answer": selected_option if selected_option else "No Answer",
+                "your_answer": selected_option,
                 "correct_answer": question["answer"],
                 "result": result
             })
 
-            # Provide immediate feedback
-            if result == "Correct":
-                console.print("[green]Correct![/green]")
-            elif result == "Timeout":
-                console.print(f"[red]You ran out of time! The correct answer was: {question['answer']}[/red]")
-            else:
-                console.print(f"[red]Wrong! The correct answer was: {question['answer']}[/red]")
-
         clear_terminal()
-        # Show the final score
         console.print(f"\n[bold green]Quiz Complete![/bold green] You scored {self.score}/{len(self.questions)}.")
 
-        # Display the summary in chunks 
-        chunk_size = 4 
+        # Final summary display
+        chunk_size = 4
         for i in range(0, len(summary), chunk_size):
             clear_terminal()
             chunk = summary[i:i + chunk_size]
@@ -248,7 +265,7 @@ class Quiz:
             # Show message if more chunks remain
             if i + chunk_size < len(summary):
                 input("\nPress Enter to see the rest of your results...")
-    
+
         self.save_results()
 
     def save_results(self):
